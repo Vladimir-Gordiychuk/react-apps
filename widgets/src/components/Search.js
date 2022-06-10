@@ -26,7 +26,7 @@ const Search = () => {
             if (response.data && !response.data.error) {
                 setResults(response.data.query.search.map(item => {
                     return {
-                        id: item.pageId,
+                        id: item.pageid,
                         title: item.title,
                         content: item.snippet,
                         isHtml: true

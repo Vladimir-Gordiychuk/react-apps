@@ -25,7 +25,7 @@ export default ({ items }) => {
 
 
             return (
-                <React.Fragment key={item.title}>
+                <React.Fragment key={item.id}>
                     <div className={`title ${active}`}
                         onClick={() => onTitleClick(index)}
                     >
