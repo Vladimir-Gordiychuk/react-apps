@@ -28,7 +28,8 @@ const Search = () => {
                     return {
                         id: item.pageId,
                         title: item.title,
-                        content: item.snippet
+                        content: item.snippet,
+                        isHtml: true
                     };
                 }));
             }

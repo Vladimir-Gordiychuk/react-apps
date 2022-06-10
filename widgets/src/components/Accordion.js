@@ -13,6 +13,17 @@ export default ({ items }) => {
         (item, index) => {
             const active = activeIndex === index ? 'active' : '';
 
+            const content = item.isHtml ?
+                (<iframe
+                    className={`content ${active}`}
+                    src={"data:text/html;charset=utf-8," + item.content}
+                    width="100%"
+                />) :
+                (<div className={`content ${active}`}>
+                    <p>{item.content}</p>
+                </div>);
+
+
             return (
                 <React.Fragment key={item.title}>
                     <div className={`title ${active}`}
@@ -21,9 +32,7 @@ export default ({ items }) => {
                         <i className="dropdown icon"></i>
                         {item.title}
                     </div>
-                    <div className={`content ${active}`}>
-                        <p>{item.content}</p>
-                    </div>
+                    {content}
                 </React.Fragment>
             );
 
