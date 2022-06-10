@@ -1,17 +1,32 @@
+import React, { useState } from 'react';
+
 export default ({ items }) => {
+
+    const [activeIndex, setActiveIndex] =
+        useState(null);
+
+    const onTitleClick = (index) => {
+        setActiveIndex(index);
+    };
+
     const renderedItems = items.map(
-        item => {
+        (item, index) => {
+            const active = activeIndex === index ? 'active' : '';
+
             return (
-                <div key={item.title}>
-                    <div className="title active">
+                <React.Fragment key={item.title}>
+                    <div className={`title ${active}`}
+                        onClick={() => onTitleClick(index)}
+                    >
                         <i className="dropdown icon"></i>
                         {item.title}
                     </div>
-                    <div className="content active">
+                    <div className={`content ${active}`}>
                         <p>{item.content}</p>
                     </div>
-                </div>
-                );
+                </React.Fragment>
+            );
+
         }
     );
 
