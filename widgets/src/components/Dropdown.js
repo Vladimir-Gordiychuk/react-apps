@@ -1,28 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const Dropdown = ({ options, selection, placeholder, onSelect }) => {
 
     const [selected, setSelected] = useState(selection);
     const [expanded, setExpanded] = useState(false);
 
+    const ref = useRef();
+
+    useEffect(() => {
+        document.body.addEventListener(
+            'click',
+            (event) => {
+                if (ref.current.contains(event.target))
+                    return;
+
+                setExpanded(false);
+            },
+            { capture: false }
+        );
+    }, []);
+
     const renderedOptions = expanded ? options
         .filter(option => option != selected)
-        .map(option => {
-
-        const onOptionSelected = () => {
-            setSelected(option);
-            setExpanded(false);
-            onSelect(option);
-        }
-
-        return (
-            <div key={option.value}
-                className="item"
-                onClick={onOptionSelected}>
-                {option.label}
-            </div>
-        );
-    }) : null;
+        .map(option =>
+        {
+            return (
+                <div key={option.value}
+                    className="item"
+                    onClick={() => {
+                        setSelected(option);
+                        onSelect(option);
+                    }}>
+                    {option.label}
+                </div>
+            );
+        }) : null;
 
     const selectedLabel = selected ?
         selected.label :
@@ -32,7 +44,7 @@ const Dropdown = ({ options, selection, placeholder, onSelect }) => {
     const expandedOptionsClass = expanded ? 'visible transition' : '';
 
     return (
-        <div className="ui form">
+        <div ref={ref} className="ui form">
             <div className="field">
                 <label className="label">Select a Color</label>
                 <div className={`ui selection dropdown ${expandedHeaderClass}`}
