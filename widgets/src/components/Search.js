@@ -8,26 +8,26 @@ const Search = () => {
     const [request, setRequest] = useState(term);
     const [results, setResults] = useState([]);
 
-    const search = async (term) => {
-        const response = await wikipedia.get('', {
-            params: {
-                srsearch: term
-            }
-        });
-
-        if (response.data && !response.data.error) {
-            setResults(response.data.query.search.map(item => {
-                return {
-                    id: item.pageid,
-                    title: item.title,
-                    content: item.snippet,
-                    isHtml: true
-                };
-            }));
-        }
-    };
-
     useEffect(() => {
+        const search = async (term) => {
+            const response = await wikipedia.get('', {
+                params: {
+                    srsearch: term
+                }
+            });
+
+            if (response.data && !response.data.error) {
+                setResults(response.data.query.search.map(item => {
+                    return {
+                        id: item.pageid,
+                        title: item.title,
+                        content: item.snippet,
+                        isHtml: true
+                    };
+                }));
+            }
+        };
+
         if (request) {
             search(request);
         }
@@ -57,15 +57,12 @@ const Search = () => {
 
         return (
             <div key={result.id} className="item">
-                <div className="right floated content">
-                    <a className="ui button"
-                        href={`https://en.wikipedia.org?curid=${result.id}`}
-                    >
-                        Go
-                    </a>
-                </div>
                 <div className="content">
-                    <div className="header">{result.title}</div>
+                    <div className="header">
+                        <a href={`https://en.wikipedia.org?curid=${result.id}`}>
+                            {result.title}
+                        </a>
+                    </div>
                     <iframe id={'frame' + result.id}
                         srcDoc={result.content}
                         width="100%"
