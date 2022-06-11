@@ -8,16 +8,22 @@ const Dropdown = ({ options, selection, placeholder, onSelect }) => {
     const ref = useRef();
 
     useEffect(() => {
+        const handler = (event) => {
+            if (ref.current.contains(event.target))
+                return;
+
+            setExpanded(false);
+        };
+
         document.body.addEventListener(
             'click',
-            (event) => {
-                if (ref.current.contains(event.target))
-                    return;
-
-                setExpanded(false);
-            },
+            handler,
             { capture: false }
         );
+
+        return () => {
+            document.body.removeEventListener('click', handler);
+        }
     }, []);
 
     const renderedOptions = expanded ? options

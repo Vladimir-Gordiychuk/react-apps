@@ -50,7 +50,7 @@ export default () => {
                 selection={selected}
                 onSelect={(option) => setSelected(option)}
             />
-            {/*<Search />*/}
+            <p style={{ color: selected.value }}>Text sample</p>
         </div>
     );
 }
