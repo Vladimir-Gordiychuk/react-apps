@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import Dropdown from './Dropdown';
+import Convert from './Convert';
+import SearchBar from './SearchBar';
 
 const languages = [
     {
@@ -19,15 +21,19 @@ const languages = [
 const Translate = (props) => {
 
     const [language, setLanguage] = useState(languages[0]);
-
+    const [text, setText] = useState('');
 
     return (
-        <div>
+        <div className="ui segment">
+            <SearchBar label="Input Text" onSearch={setText}/>
             <Dropdown options={languages}
                 onSelect={setLanguage}
                 selection={language}>
                 Select Language
             </Dropdown>
+            <hr />
+            <h3 className="ui header">Output</h3>
+            <Convert text={text} language={language.value} />
         </div>
         );
 
