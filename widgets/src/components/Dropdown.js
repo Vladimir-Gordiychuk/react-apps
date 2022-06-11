@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Children } from 'react';
 
-const Dropdown = ({ options, selection, placeholder, onSelect }) => {
+const Dropdown = ({ options, selection, placeholder, onSelect, children }) => {
 
     const [selected, setSelected] = useState(selection);
     const [expanded, setExpanded] = useState(false);
@@ -52,7 +52,7 @@ const Dropdown = ({ options, selection, placeholder, onSelect }) => {
     return (
         <div ref={ref} className="ui form">
             <div className="field">
-                <label className="label">Select a Color</label>
+                <label className="label">{children || 'Select item.'}</label>
                 <div className={`ui selection dropdown ${expandedHeaderClass}`}
                     onClick={() => setExpanded(!expanded)}>
                     <i className="dropdown icon"></i>

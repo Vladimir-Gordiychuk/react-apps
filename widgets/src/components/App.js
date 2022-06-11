@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Accordion from './Accordion';
 import Search from './Search';
 import Dropdown from './Dropdown';
+import Translate from './Translate';
 
 const items = [
     {
@@ -41,16 +42,9 @@ const options = [
 
 export default () => {
 
-    const [selected, setSelected] = useState(options[0]);
-
     return (
         <div>
-            <Dropdown
-                options={options}
-                selection={selected}
-                onSelect={(option) => setSelected(option)}
-            />
-            <p style={{ color: selected.value }}>Text sample</p>
+            <Translate />
         </div>
     );
 }
