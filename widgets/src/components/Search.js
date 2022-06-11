@@ -8,23 +8,23 @@ const Search = () => {
     const [request, setRequest] = useState(term);
     const [results, setResults] = useState([]);
 
-    const search = (term) => {
-        wikipedia.get('', {
+    const search = async (term) => {
+        const response = await wikipedia.get('', {
             params: {
                 srsearch: term
             }
-        }).then((response) => {
-            if (response.data && !response.data.error) {
-                setResults(response.data.query.search.map(item => {
-                    return {
-                        id: item.pageid,
-                        title: item.title,
-                        content: item.snippet,
-                        isHtml: true
-                    };
-                }));
-            }
         });
+
+        if (response.data && !response.data.error) {
+            setResults(response.data.query.search.map(item => {
+                return {
+                    id: item.pageid,
+                    title: item.title,
+                    content: item.snippet,
+                    isHtml: true
+                };
+            }));
+        }
     };
 
     useEffect(() => {
