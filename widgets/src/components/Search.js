@@ -1,36 +1,48 @@
 import { useState, useEffect } from 'react';
 
 import wikipedia from '../apis/wikipedia';
-import Accordion from './Accordion';
 
 const Search = () => {
 
-    const [term, setTerm] = useState('');
+    const [term, setTerm] = useState('React');
+    const [request, setRequest] = useState(term);
     const [results, setResults] = useState([]);
 
+    const search = (term) => {
+        wikipedia.get('', {
+            params: {
+                srsearch: term
+            }
+        }).then((response) => {
+            if (response.data && !response.data.error) {
+                setResults(response.data.query.search.map(item => {
+                    return {
+                        id: item.pageid,
+                        title: item.title,
+                        content: item.snippet,
+                        isHtml: true
+                    };
+                }));
+            }
+        });
+    };
+
     useEffect(() => {
-        if (term.length === 0)
+        if (request) {
+            search(request);
+        }
+    }, [request]);
+
+    useEffect(() => {
+        if (!term)
             return;
 
-        const timer = setTimeout(() => {
-            wikipedia.get('', {
-                params: {
-                    srsearch: term
-                }
-            }).then((response) => {
-                console.log(response.data.query.search);
-                if (response.data && !response.data.error) {
-                    setResults(response.data.query.search.map(item => {
-                        return {
-                            id: item.pageid,
-                            title: item.title,
-                            content: item.snippet,
-                            isHtml: true
-                        };
-                    }));
-                }
-            });
-        }, 500);
+        if (results.length === 0) {
+            setRequest(term);
+            return;
+        }
+
+        const timer = setTimeout(() => setRequest(term), 1000);
 
         return () => {
             clearTimeout(timer);
@@ -54,14 +66,11 @@ const Search = () => {
                 </div>
                 <div className="content">
                     <div className="header">{result.title}</div>
-                    <div className="description">
-                        <iframe id={'frame' + result.id}
-                            className="content"
-                            srcdoc={result.content}
-                            width="100%"
-                            frameBorder="0"
-                            />
-                    </div>
+                    <iframe id={'frame' + result.id}
+                        srcDoc={result.content}
+                        width="100%"
+                        frameBorder="0"
+                        />
                 </div>
             </div>
             );
