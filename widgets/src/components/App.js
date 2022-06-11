@@ -6,6 +6,7 @@ import Accordion from './Accordion';
 import Search from './Search';
 import Dropdown from './Dropdown';
 import Translate from './Translate';
+import Route from './Route';
 
 const items = [
     {
@@ -44,7 +45,18 @@ export default () => {
 
     return (
         <div>
-            <Translate />
+            <Route path="/">
+                <Accordion items={items} />
+            </Route>
+            <Route path="/list">
+                <Search />
+            </Route>
+            <Route path="/dropdown">
+                <Dropdown options={options}>Select Color</Dropdown>
+            </Route>
+            <Route path="/translate">
+                <Translate />
+            </Route>
         </div>
     );
 }

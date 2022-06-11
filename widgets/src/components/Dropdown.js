@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef, Children } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
-const Dropdown = ({ options, selection, placeholder, onSelect, children }) => {
+const Dropdown = ({ options, selection, onSelect, children }) => {
 
-    const [selected, setSelected] = useState(selection);
+    const [selected, setSelected] = useState(selection || options[0]);
     const [expanded, setExpanded] = useState(false);
 
     const ref = useRef();
@@ -27,7 +27,7 @@ const Dropdown = ({ options, selection, placeholder, onSelect, children }) => {
     }, []);
 
     const renderedOptions = expanded ? options
-        .filter(option => option != selected)
+        .filter(option => option !== selected)
         .map(option =>
         {
             return (
@@ -42,10 +42,6 @@ const Dropdown = ({ options, selection, placeholder, onSelect, children }) => {
             );
         }) : null;
 
-    const selectedLabel = selected ?
-        selected.label :
-        (placeholder || 'Select option.');
-
     const expandedHeaderClass = expanded ? 'visible active' : '';
     const expandedOptionsClass = expanded ? 'visible transition' : '';
 
@@ -56,7 +52,7 @@ const Dropdown = ({ options, selection, placeholder, onSelect, children }) => {
                 <div className={`ui selection dropdown ${expandedHeaderClass}`}
                     onClick={() => setExpanded(!expanded)}>
                     <i className="dropdown icon"></i>
-                    <div className="text">{selectedLabel}</div>
+                    <div className="text">{selected.label}</div>
                     <div className={`menu ${expandedOptionsClass}`}>
                         {renderedOptions}
                     </div>

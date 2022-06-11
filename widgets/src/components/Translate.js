@@ -5,6 +5,14 @@ import SearchBar from './SearchBar';
 
 const languages = [
     {
+        label: 'Ukranian',
+        value: 'uk'
+    },
+    {
+        label: 'Polish',
+        value: 'pl'
+    },
+    {
         label: 'Afrikaans',
         value: 'af'
     },

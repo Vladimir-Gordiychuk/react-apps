@@ -22,12 +22,7 @@ const Convert = ({ text, language }) => {
         }
     }, [text, language]);
 
-    return (
-        <div>
-            {translated}
-        </div>
-        );
-
+    return <h2>{translated}</h2>;
 }
 
 export default Convert;
