@@ -40,10 +40,10 @@ const Translate = (props) => {
                     selection={language}>
                     Select Language
                 </Dropdown>
-                <div class="ui divider"></div>
+                <div className="ui divider"></div>
                 <h3 className="ui header">Output</h3>
                 <Convert text={text} language={language.value} />
-                <div class="ui divider"></div>
+                <div className="ui divider"></div>
                 <div>
                     Sponsored by <a href="https://www.udemy.com/user/sgslo/">Stephen Grider</a>
                 </div>

@@ -29,7 +29,7 @@ const WikiCard = ({ page }) => {
         <div className="item">
             <div className="content">
                 <div className="header">
-                    <a href={`https://en.wikipedia.org?curid=${page.id}`}>
+                    <a href={`https://ru.wikipedia.org?curid=${page.id}`}>
                         {page.title}
                     </a>
                 </div>
