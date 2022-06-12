@@ -4,7 +4,7 @@ const Link = ({ href, children, className, activeClassName }) => {
 
     activeClassName = activeClassName || className;
 
-    const [isActive, setIsActive] = useState();
+    const [isActive, setIsActive] = useState(window.location.pathname === href);
 
     useEffect(() => {
         const checkActiveState = () => {
