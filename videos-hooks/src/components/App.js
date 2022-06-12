@@ -3,27 +3,17 @@ import { useState, useEffect } from 'react';
 import SearchBar from './SearchBar';
 import VideoList from './VideoList';
 import VideoDetail from './VideoDetail';
-import youtube from '../apis/youtube';
+
+import useVideos from '../hooks/useVideos';
 
 const App = () => {
 
-    const [videos, setVideos] = useState([]);
-    const [selected, setSelected] = useState(null);
-
-    const search = async (term) => {
-        const response = await youtube.get('/search', {
-            params: {
-                q: term
-            }
-        });
-        
-        setVideos(response.data.items);
-        setSelected(response.data.items[0]);
-    };
+    const [videos, search] = useVideos('world wonders');
+    const [selected, setSelected] = useState(videos[0]);
 
     useEffect(() => {
-        search('world wonders');
-    }, []);
+        setSelected(videos[0]);
+    }, [videos]);
 
     return (
         <div className="ui container">
@@ -35,7 +25,7 @@ const App = () => {
                     </div>
                     <div class="five wide column">
                         <VideoList videos={videos}
-                            onSelect={(video) => setSelected(video)} />
+                            onSelect={setSelected} />
                     </div>
                 </div>
             </div>
