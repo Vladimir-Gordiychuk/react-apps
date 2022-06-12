@@ -13,8 +13,6 @@ const Route = ({ path, children }) => {
 
         window.addEventListener(POPSTATE_EVENT, onLocationChange);
 
-        setCurrentPath(path);
-
         return () => {
             window.removeEventListener(POPSTATE_EVENT, onLocationChange);
         };
