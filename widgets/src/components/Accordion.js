@@ -39,7 +39,9 @@ export default ({ items }) => {
         }
     );
 
-    return <div className="ui styled accordion">
-        {renderedItems}
+    return <div className="ui container">
+        <div className="ui styled accordion">
+            {renderedItems}
+        </div>
     </div>;
 };

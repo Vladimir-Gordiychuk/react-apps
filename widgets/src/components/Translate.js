@@ -32,16 +32,22 @@ const Translate = (props) => {
     const [text, setText] = useState('');
 
     return (
-        <div className="ui segment">
-            <SearchBar label="Input Text" onSearch={setText}/>
-            <Dropdown options={languages}
-                onSelect={setLanguage}
-                selection={language}>
-                Select Language
-            </Dropdown>
-            <hr />
-            <h3 className="ui header">Output</h3>
-            <Convert text={text} language={language.value} />
+        <div className="ui container">
+            <div className="ui segment">
+                <SearchBar label="Input Text" onSearch={setText}/>
+                <Dropdown options={languages}
+                    onSelect={setLanguage}
+                    selection={language}>
+                    Select Language
+                </Dropdown>
+                <div class="ui divider"></div>
+                <h3 className="ui header">Output</h3>
+                <Convert text={text} language={language.value} />
+                <div class="ui divider"></div>
+                <div>
+                    Sponsored by <a href="https://www.udemy.com/user/sgslo/">Stephen Grider</a>
+                </div>
+            </div>
         </div>
         );
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-const SearchBar = ({ onSearch, timeout, label }) => {
+const SearchBar = ({ onSearch, timeout, label, placeholder }) => {
 
     const [term, setTerm] = useState('');
 
@@ -27,7 +27,9 @@ const SearchBar = ({ onSearch, timeout, label }) => {
         <div className="ui form">
             <div className="field">
                 <label htmlFor="query">{label || 'Search for'}</label>
-                <input id="query" value={term} onChange={onChange} />
+                <input id="query" value={term} onChange={onChange}
+                    placeholder={placeholder || 'Type your request here'}
+                />
             </div>
         </div>
     );

@@ -3,11 +3,13 @@ import './App.css';
 import { useState } from 'react';
 
 import Accordion from './Accordion';
-import Search from './Search';
-import Dropdown from './Dropdown';
+import ArticleSearch from './ArticleSearch';
 import Translate from './Translate';
 import Route from './Route';
-import Header from './Header';
+import NavBar from './NavBar';
+import Link from './Link';
+import ImageSearch from './ImageSearch';
+import YoutubeSearch from './YoutubeSearch';
 
 const items = [
     {
@@ -27,34 +29,38 @@ const items = [
     }
 ];
 
-const options = [
-    {
-        label: 'The Color Red',
-        value: 'red'
-    },
-    {
-        label: 'The Color Green',
-        value: 'green'
-    },
-    {
-        label: 'A Shade of Blue',
-        value: 'blue'
-    }
-];
-
 export default () => {
 
     return (
         <div>
-            <Header />
+            <NavBar>
+                <Link href="/" className="item" activeClassName="active item">
+                    About
+                </Link>
+                <Link href="/images" className="item" activeClassName="active item">
+                    Images
+                </Link>
+                <Link href="/videos" className="item" activeClassName="active item">
+                    Videos
+                </Link>
+                <Link href="/articles" className="item" activeClassName="active item">
+                    Articles
+                </Link>
+                <Link href="/translate" className="item" activeClassName="active item">
+                    Translate
+                </Link>
+            </NavBar>
             <Route path="/">
                 <Accordion items={items} />
             </Route>
-            <Route path="/list">
-                <Search />
+            <Route path="/images">
+                <ImageSearch />
             </Route>
-            <Route path="/dropdown">
-                <Dropdown options={options}>Select Color</Dropdown>
+            <Route path="/articles">
+                <ArticleSearch />
+            </Route>
+            <Route path="/videos">
+                <YoutubeSearch />
             </Route>
             <Route path="/translate">
                 <Translate />

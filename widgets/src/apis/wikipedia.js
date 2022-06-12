@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const wikipedia = axios.create({
-    baseURL: 'https://en.wikipedia.org/w/api.php',
+    baseURL: 'https://ru.wikipedia.org/w/api.php',
     params : {
         action: 'query',
         list: 'search',
