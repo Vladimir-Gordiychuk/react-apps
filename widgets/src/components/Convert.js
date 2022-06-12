@@ -1,26 +1,17 @@
 import { useState, useEffect } from 'react';
 
-import googleTranslage from '../apis/google-translate';
+import libreTranslate from '../apis/libre-translate';
 
-const Convert = ({ text, language }) => {
+const Convert = ({ text, source, target }) => {
 
     const [translated, setTranslated] = useState('');
 
     useEffect(() => {
-        if (text) {
-            console.log(`Translate '${text}' to '${language}'`);
-            googleTranslage.post('', {}, {
-                params: {
-                    q: text,
-                    target: language
-                }
-            }).then((response) => {
-                if (response.data) {
-                    setTranslated(response.data.data.translations[0].translatedText);
-                }
-            });
+        if (text && source && target) {
+            console.log(`Translate '${text}' from '${source}' to '${target}'.`);
+            libreTranslate.translate(text, source, target).then(setTranslated);
         }
-    }, [text, language]);
+    }, [text, source, target]);
 
     return <h2>{translated}</h2>;
 }
