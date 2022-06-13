@@ -30,8 +30,8 @@ const items = [
         title: 'How can I make use of this site?',
         content: (<div>
             <p>
-                Well, there isn't much use of this site for anybody else except it's Author. 
-                You defenetely can explore and test this application. 
+                Well, there isn't much use of this site for anybody else except its Author. 
+                You definitely can explore and test this application. 
                 There are certain limits for amount of API calls this application can make, 
                 but it is unlikely that casual browsing will trigger them.
             </p>
@@ -48,9 +48,9 @@ const items = [
             <p>This is a plain React app - everything gets executed on Your machine.
             Nothing is stored on the server side except React app bundle.
             That means that no personal data is stored on the server, where this application is deployed.</p>
-            <p>There only few peaces of data that get sent to external APIs (servers):
+            <p>There only a few peaces of data that get sent to external APIs (servers):
             this is the data you provide in the input fields and search bars.
-            I can not guarantee that this data is secure out there, so, please,
+            I cannot guarantee that this data is secure out there, so, please,
             do not provide any sensitive information in the input fields and/or search bars.</p>
         </div>)
     },
@@ -83,8 +83,8 @@ const items = [
         id: 8,
         title: 'Why use React?',
         content: (<div>
-            React lets you implement certain technics that make you GUI-elements (React components)
-            much more reusable while keeping source code clean and transparant.
+            React lets you implement certain technics that make your GUI-elements (React components)
+            much more reusable while keeping source code clean and transparent.
         </div>)
     }
 ];
