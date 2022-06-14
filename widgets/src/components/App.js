@@ -60,6 +60,7 @@ const items = [
         content: (<div>
             This is a very basic ('vanilla') React application.
             Only <b>React.js</b> and <b>axios</b> being used at the moment.
+            Styling provided by <b>Semantic UI</b> css library.
         </div>)
     },
     {
