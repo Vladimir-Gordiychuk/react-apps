@@ -1,12 +1,19 @@
-const Button = () => {
-    return (
-        <div className="field">
-            <label>Name</label>
-            <div className="field">
+import React from 'react';
+import LanguageContext from '../contexts/LanguageContext';
+
+class Field extends React.Component {
+    static contextType = LanguageContext;
+
+    render() {
+        const caption = this.context === 'english' ? 'Name' : 'Naam';
+        return (
+            <div className="ui field">
+                <label>{caption}</label>
                 <input type="text" placeholder="Enter your name"></input>
             </div>
-        </div>
         );
-};
+    };
+}
 
-export default Button;
+
+export default Field;
