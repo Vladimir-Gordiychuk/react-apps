@@ -15,7 +15,7 @@ class Button extends React.Component {
     }
 
     renderCaption = (context) => {
-        return (context === 'english') ? 'Submit' : 'Voorleggen';
+        return (context.language === 'english') ? 'Submit' : 'Voorleggen';
     }
 
     render() {
