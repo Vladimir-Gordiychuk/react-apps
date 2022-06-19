@@ -7,7 +7,7 @@ import LanguageSelector from './LanguageSelector';
 class App extends React.Component {
     state = { language: 'english' };
 
-    setLanguage(language) {
+    setLanguage = (language) => {
         this.setState({
             language
         });
