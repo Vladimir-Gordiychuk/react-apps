@@ -4,12 +4,17 @@ import { glMatrix, mat4 } from "gl-matrix";
 import Rotation from "./Rotation";
 import StlInput from "./StlInput";
 import RenderSettings from "./RenderSettings";
+import Orbit from "./Orbit";
 
 import Scene from "../viewer/Scene";
 import Loader from "../viewer/Loader";
 import ColorTriangleShader from "../viewer/ColorTriangleShader";
 import WireframeShader from "../viewer/WireframeShader";
 import { initGL, loadTextResource } from "../viewer/util";
+
+function flipYZ(xyz) {
+    return [xyz[0], xyz[2], xyz[1]];
+}
 
 export default class StlViewer extends React.Component {
     state = {
@@ -19,7 +24,9 @@ export default class StlViewer extends React.Component {
             y: 480,
         },
         model: null,
-        cameraPosition: [0, 0, 0],
+        cameraPosition: [1, 0, 0],
+        up: [0, 1, 0],
+        distance: 10,
         zoom: 1,
         rotation: {
             x: 0,
@@ -99,7 +106,7 @@ export default class StlViewer extends React.Component {
             this.viewMatrix,
             this.scene.cameraPosition,
             [0, 0, 0],
-            [0, 1, 0]
+            this.state.up //[0, 1, 0]
         );
 
         this.gl.clearColor(0.7, 0.7, 0.7, 1.0);
@@ -173,6 +180,7 @@ export default class StlViewer extends React.Component {
 
         this.setState({
             model,
+            distance: size * 2,
             cameraPosition: [0.0, 0.0, -size * 2],
         });
 
@@ -186,6 +194,14 @@ export default class StlViewer extends React.Component {
             rotation,
         });
         this.scene.rotation = rotation;
+    };
+
+    onOrbitChange = (orbit) => {
+        console.log(orbit);
+        this.setState({
+            cameraPosition: orbit.position,
+            up: orbit.up,
+        });
     };
 
     onWheel = (event) => {
@@ -264,16 +280,22 @@ export default class StlViewer extends React.Component {
     render() {
         return (
             <div>
-                <canvas
-                    ref={this.canvasRef}
-                    style={{
-                        width: "100%",
-                        height: "50vh",
-                        margin: "10px",
-                    }}
-                    width={this.state.resolution.x}
-                    height={this.state.resolution.y}
-                />
+                <Orbit
+                    radius={Math.abs(this.state.distance)}
+                    onOrbitChange={this.onOrbitChange}
+                >
+                    <canvas
+                        ref={this.canvasRef}
+                        style={{
+                            width: "100%",
+                            height: "50vh",
+                            margin: "10px",
+                        }}
+                        width={this.state.resolution.x}
+                        height={this.state.resolution.y}
+                    />
+                </Orbit>
+
                 {this.renderControls()}
                 <div className="ui segment">
                     <StlInput onModelChange={this.onModelChange} />
