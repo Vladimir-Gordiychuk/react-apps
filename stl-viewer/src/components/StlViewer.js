@@ -255,7 +255,7 @@ export default class StlViewer extends React.Component {
                     </div>
                 </div>
                 <div className="four wide column">
-                    <RenderSettings onChange={this.onSettingsChange} />;
+                    <RenderSettings onChange={this.onSettingsChange} />
                 </div>
             </div>
         );
