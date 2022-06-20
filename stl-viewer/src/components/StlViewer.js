@@ -1,12 +1,15 @@
 import React from "react";
+import { glMatrix, mat4 } from "gl-matrix";
+
 import Rotation from "./Rotation";
 import StlInput from "./StlInput";
+import RenderSettings from "./RenderSettings";
+
 import Scene from "../viewer/Scene";
 import Loader from "../viewer/Loader";
 import ColorTriangleShader from "../viewer/ColorTriangleShader";
 import WireframeShader from "../viewer/WireframeShader";
 import { initGL, loadTextResource } from "../viewer/util";
-import { glMatrix, mat4 } from "gl-matrix";
 
 export default class StlViewer extends React.Component {
     state = {
@@ -22,6 +25,10 @@ export default class StlViewer extends React.Component {
             x: 0,
             y: 0,
             z: 0,
+        },
+        settings: {
+            solid: true,
+            wireframe: true,
         },
     };
 
@@ -100,19 +107,23 @@ export default class StlViewer extends React.Component {
 
         if (!this.scene.getObject()) return;
 
-        this.gl.enable(this.gl.DEPTH_TEST);
-        this.colorTriangleShader.use();
-        this.colorTriangleShader.world = this.scene.rotationMatrix;
-        this.colorTriangleShader.view = this.viewMatrix;
-        this.colorTriangleShader.projection = this.projMatrix;
-        this.colorTriangleShader.drawObject(this.scene.getObject());
+        if (this.state.settings.solid) {
+            this.gl.enable(this.gl.DEPTH_TEST);
+            this.colorTriangleShader.use();
+            this.colorTriangleShader.world = this.scene.rotationMatrix;
+            this.colorTriangleShader.view = this.viewMatrix;
+            this.colorTriangleShader.projection = this.projMatrix;
+            this.colorTriangleShader.drawObject(this.scene.getObject());
+        }
 
-        this.gl.disable(this.gl.DEPTH_TEST);
-        this.wireframeShader.use();
-        this.wireframeShader.world = this.scene.rotationMatrix;
-        this.wireframeShader.view = this.viewMatrix;
-        this.wireframeShader.projection = this.projMatrix;
-        this.wireframeShader.drawObject(this.scene.getWireframeObject());
+        if (this.state.settings.wireframe) {
+            this.gl.disable(this.gl.DEPTH_TEST);
+            this.wireframeShader.use();
+            this.wireframeShader.world = this.scene.rotationMatrix;
+            this.wireframeShader.view = this.viewMatrix;
+            this.wireframeShader.projection = this.projMatrix;
+            this.wireframeShader.drawObject(this.scene.getWireframeObject());
+        }
 
         //requestAnimationFrame(this.renderScene);
     };
@@ -179,18 +190,21 @@ export default class StlViewer extends React.Component {
 
     onWheel = (event) => {
         event.preventDefault();
-        console.log(event);
 
         let zoom = this.state.zoom * (event.deltaY > 0 ? 1.125 : 0.875);
 
         // Restrict scale
         zoom = Math.min(Math.max(0.125, zoom), 4);
 
-        console.log(zoom);
-
         // Apply scale transform
         this.setState({
             zoom,
+        });
+    };
+
+    onSettingsChange = (settings) => {
+        this.setState({
+            settings,
         });
     };
 
@@ -229,12 +243,20 @@ export default class StlViewer extends React.Component {
 
     renderControls() {
         if (!this.state.model) return null;
+
         return (
-            <div className="ui segment">
-                <Rotation
-                    rotation={this.state.rotation}
-                    onRotationChange={this.onRotationChange}
-                />
+            <div className="ui grid">
+                <div className="twelve wide column">
+                    <div className="ui segment">
+                        <Rotation
+                            rotation={this.state.rotation}
+                            onRotationChange={this.onRotationChange}
+                        />
+                    </div>
+                </div>
+                <div className="four wide column">
+                    <RenderSettings onChange={this.onSettingsChange} />;
+                </div>
             </div>
         );
     }
