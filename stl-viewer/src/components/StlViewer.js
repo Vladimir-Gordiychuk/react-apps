@@ -10,13 +10,24 @@ import { glMatrix, mat4 } from "gl-matrix";
 
 export default class StlViewer extends React.Component {
     state = {
+        initialized: false,
+        resolution: {
+            x: 640,
+            y: 480,
+        },
         model: null,
+        cameraPosition: [0, 0, 0],
+        zoom: 1,
         rotation: {
             x: 0,
             y: 0,
             z: 0,
         },
-        distance: 10.0,
+    };
+
+    lastResolution = {
+        x: 0,
+        y: 0,
     };
 
     constructor(props) {
@@ -25,9 +36,6 @@ export default class StlViewer extends React.Component {
     }
 
     load = (canvas) => {
-        this.gl = initGL(canvas, true, false);
-        this.scene = new Scene(this.gl);
-
         let shaders = [
             "shaders/color.vs.glsl",
             "shaders/color.fs.glsl",
@@ -35,9 +43,9 @@ export default class StlViewer extends React.Component {
             "shaders/wireframe.fs.glsl",
         ];
 
-        let loader = new Loader(shaders, (resources) => {
-            this.init(canvas, resources);
-        });
+        let loader = new Loader(shaders, (resources) =>
+            this.init(canvas, resources)
+        );
 
         shaders.forEach((shaderPath) => {
             loadTextResource(shaderPath, (error, shaderListing) => {
@@ -51,6 +59,35 @@ export default class StlViewer extends React.Component {
     };
 
     renderScene = () => {
+        const canvas = this.canvasRef.current;
+        const w = canvas.width;
+        const h = canvas.height;
+
+        if (this.lastResolution.x !== w || this.lastResolution.y !== h) {
+            // Update viewport size and projection matrix.
+
+            this.gl.viewport(0, 0, w, h);
+
+            mat4.perspective(
+                this.projMatrix,
+                glMatrix.toRadian(45),
+                w / h,
+                0.1,
+                1000.0
+            );
+            this.lastResolution = {
+                x: w,
+                y: h,
+            };
+        }
+
+        this.scene.cameraPosition = this.state.cameraPosition.map(
+            (x) => x * this.state.zoom
+        );
+        // if (this.scene.getObject() !== this.state.model) {
+        //     this.scene.bindStlModel(this.state.model);
+        // }
+
         mat4.lookAt(
             this.viewMatrix,
             this.scene.cameraPosition,
@@ -58,27 +95,32 @@ export default class StlViewer extends React.Component {
             [0, 1, 0]
         );
 
-        this.gl.clearColor(0.7, 0.7, 0.9, 1.0);
+        this.gl.clearColor(0.7, 0.7, 0.7, 1.0);
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+
+        if (!this.scene.getObject()) return;
 
         this.gl.enable(this.gl.DEPTH_TEST);
         this.colorTriangleShader.use();
-        this.colorTriangleShader.view = this.viewMatrix;
         this.colorTriangleShader.world = this.scene.rotationMatrix;
-        if (this.scene.getObject())
-            this.colorTriangleShader.drawObject(this.scene.getObject());
+        this.colorTriangleShader.view = this.viewMatrix;
+        this.colorTriangleShader.projection = this.projMatrix;
+        this.colorTriangleShader.drawObject(this.scene.getObject());
 
         this.gl.disable(this.gl.DEPTH_TEST);
         this.wireframeShader.use();
-        this.wireframeShader.view = this.viewMatrix;
         this.wireframeShader.world = this.scene.rotationMatrix;
-        if (this.scene.getObject())
-            this.wireframeShader.drawObject(this.scene.getWireframeObject());
+        this.wireframeShader.view = this.viewMatrix;
+        this.wireframeShader.projection = this.projMatrix;
+        this.wireframeShader.drawObject(this.scene.getWireframeObject());
 
         //requestAnimationFrame(this.renderScene);
     };
 
     init = (canvas, resources) => {
+        this.gl = initGL(canvas, true, false);
+        this.scene = new Scene(this.gl);
+
         this.colorTriangleShader = new ColorTriangleShader(
             this.gl,
             resources["shaders/color.vs.glsl"].result,
@@ -94,35 +136,22 @@ export default class StlViewer extends React.Component {
         this.viewMatrix = new Float32Array(16);
         this.projMatrix = new Float32Array(16);
 
-        mat4.perspective(
-            this.projMatrix,
-            glMatrix.toRadian(45),
-            canvas.width / canvas.height,
-            0.1,
-            1000.0
-        );
-
         this.colorTriangleShader.use();
-        this.colorTriangleShader.projection = this.projMatrix;
         this.colorTriangleShader.setAmbientLightIntensity(0.1, 0.1, 0.1);
         this.colorTriangleShader.setSunLightIntensity(0.9, 0.9, 0.9);
         this.colorTriangleShader.setSunLightDirection(5.0, 0.0, -1.0);
         this.colorTriangleShader.setObjectColor(0.8, 0.2, 0.2, 1.0);
 
         this.wireframeShader.use();
-        this.wireframeShader.projection = this.projMatrix;
         this.wireframeShader.setObjectColor(0.8, 0.2, 0.2, 1.0);
 
+        this.setState({
+            initialized: true,
+        });
         //requestAnimationFrame(this.renderScene);
     };
 
     onModelChange = (model) => {
-        console.log(model);
-        this.setState({
-            model,
-        });
-        this.scene.bindStlModel(model);
-
         const size = Math.max(
             model.AABB.max.x - model.AABB.min.x,
             Math.max(
@@ -131,23 +160,71 @@ export default class StlViewer extends React.Component {
             )
         );
 
-        this.scene.cameraPosition = [0.0, 0.0, -size * 2];
+        this.setState({
+            model,
+            cameraPosition: [0.0, 0.0, -size * 2],
+        });
+
+        if (this.scene) {
+            this.scene.bindStlModel(model);
+        }
     };
 
     onRotationChange = (rotation) => {
-        console.log(rotation);
         this.setState({
             rotation,
         });
         this.scene.rotation = rotation;
     };
 
+    onWheel = (event) => {
+        event.preventDefault();
+        console.log(event);
+
+        let zoom = this.state.zoom * (event.deltaY > 0 ? 1.125 : 0.875);
+
+        // Restrict scale
+        zoom = Math.min(Math.max(0.125, zoom), 4);
+
+        console.log(zoom);
+
+        // Apply scale transform
+        this.setState({
+            zoom,
+        });
+    };
+
+    updateCanvasResolution = () => {
+        const canvas = this.canvasRef.current;
+        const { width, height } = canvas.getBoundingClientRect();
+        this.setState({
+            resolution: {
+                x: width,
+                y: height,
+            },
+        });
+    };
+
     componentDidMount() {
-        this.load(this.canvasRef.current);
+        const canvas = this.canvasRef.current;
+
+        this.updateCanvasResolution();
+        window.addEventListener("resize", this.updateCanvasResolution);
+        canvas.addEventListener("wheel", this.onWheel, {
+            passive: false,
+        });
+        this.load(canvas);
     }
 
     componentDidUpdate() {
-        this.renderScene();
+        if (this.state.initialized) {
+            this.renderScene();
+        }
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener("resize", this.updateCanvasResolution);
+        this.canvasRef.current.removeEventListener("wheel", this.onWheel);
     }
 
     renderControls() {
@@ -165,7 +242,16 @@ export default class StlViewer extends React.Component {
     render() {
         return (
             <div>
-                <canvas ref={this.canvasRef} width="600" height="400" />
+                <canvas
+                    ref={this.canvasRef}
+                    style={{
+                        width: "100%",
+                        height: "50vh",
+                        margin: "10px",
+                    }}
+                    width={this.state.resolution.x}
+                    height={this.state.resolution.y}
+                />
                 {this.renderControls()}
                 <div className="ui segment">
                     <StlInput onModelChange={this.onModelChange} />
