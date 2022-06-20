@@ -4,7 +4,7 @@ import axios from "axios";
 export default class UrlInput extends React.Component {
     state = {
         url: "",
-        status: null,
+        error: null,
         data: null,
     };
 
@@ -27,13 +27,13 @@ export default class UrlInput extends React.Component {
                 },
             });
             this.setState({
-                status: "OK",
+                error: null,
                 data: response.data,
             });
             this.props.onDataChange(response.data);
-        } catch {
+        } catch (e) {
             this.setState({
-                status: "Error",
+                error: e.message,
                 data: null,
             });
         }
@@ -49,9 +49,20 @@ export default class UrlInput extends React.Component {
         this.onTimer();
     };
 
-    render() {
+    renderError() {
+        if (!this.state.error) return null;
         return (
-            <form className="ui form" onSubmit={this.onFormSubmit}>
+            <div className="ui error message">
+                <div className="header">Error</div>
+                <p>{this.state.error}</p>
+            </div>
+        );
+    }
+
+    render() {
+        const error = this.state.error ? "error" : "";
+        return (
+            <form className={`ui form ${error}`} onSubmit={this.onFormSubmit}>
                 <div className="field">
                     <input
                         type="text"
@@ -59,7 +70,7 @@ export default class UrlInput extends React.Component {
                         placeholder="Link to external Binary STL file"
                         onChange={(e) => this.onLinkChange(e.target.value)}
                     />
-                    {this.state.status}
+                    {this.renderError()}
                 </div>
             </form>
         );

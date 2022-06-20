@@ -153,20 +153,22 @@ export default class StlViewer extends React.Component {
     renderControls() {
         if (!this.state.model) return null;
         return (
-            <Rotation
-                rotation={this.state.rotation}
-                onRotationChange={this.onRotationChange}
-            />
+            <div className="ui segment">
+                <Rotation
+                    rotation={this.state.rotation}
+                    onRotationChange={this.onRotationChange}
+                />
+            </div>
         );
     }
 
     render() {
         return (
-            <div className="ui segment">
+            <div>
                 <canvas ref={this.canvasRef} width="600" height="400" />
+                {this.renderControls()}
                 <div className="ui segment">
                     <StlInput onModelChange={this.onModelChange} />
-                    {this.renderControls()}
                 </div>
             </div>
         );
